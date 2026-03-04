@@ -30,6 +30,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
+    
     <html lang="en" className={`${playfair.variable} ${geistMono.variable}`}>
       <body className="font-sans antialiased overflow-x-hidden">
         <div className="noise-overlay" />

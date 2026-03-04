@@ -32,10 +32,10 @@ export function ContactForm() {
       const data = await response.json()
 
       if (response.ok) {
-        setSubmitStatus({ type: "success", message: data.message })
+        setSubmitStatus({ type: "success", message: data.message ?? "Message sent successfully!" })
         setFormData({ name: "", email: "", subject: "", message: "" })
       } else {
-        setSubmitStatus({ type: "error", message: data.message })
+        setSubmitStatus({ type: "error", message: data.error ?? "Failed to send message. Please try again." })
       }
     } catch (error) {
       console.error("[v0] Form submission error:", error)

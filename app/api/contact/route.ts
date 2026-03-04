@@ -1,71 +1,41 @@
-import { NextResponse } from "next/server"
+import { NextResponse } from "next/server";
+import { client} from "@/sanity/lib/client";
 
-export async function POST(request: Request) {
+interface ContactBody {
+  name: string;
+  email: string;
+  subject?: string;
+  message: string;
+}
+
+export async function POST(req: Request) {
   try {
-    const body = await request.json()
-    const { name, email, subject, message } = body
+    const body: ContactBody = await req.json();
 
-    const emailContent = `
-      New Contact Form Submission
-      
-      Name: ${name}
-      Email: ${email}
-      Subject: ${subject}
-      
-      Message:
-      ${message}
-      
-      ---
-      Reply to: ${email}
-    `
+    const { name, email, subject, message } = body;
 
-    // Send email using fetch to a service like Resend
-    // Note: You'll need to add RESEND_API_KEY to your environment variables
-    const resendApiKey = process.env.RESEND_API_KEY
-
-    if (resendApiKey) {
-      const emailResponse = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendApiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "Portfolio Contact <onboarding@resend.dev>",
-          to: ["khanfaizjc0007@gmail.com"],
-          subject: `New Contact Form: ${subject}`,
-          text: emailContent,
-          reply_to: email,
-        }),
-      })
-
-      if (!emailResponse.ok) {
-        const errorData = await emailResponse.json()
-        console.error("[v0] Resend API error:", errorData)
-        throw new Error("Failed to send email")
-      }
-
-      console.log("[v0] Email sent successfully to khanfaizjc0007@gmail.com")
-    } else {
-      console.log("[v0] Contact form submission (no API key):", emailContent)
-      console.warn("[v0] RESEND_API_KEY not found. Add it to environment variables to enable email sending.")
+    if (!name || !email || !message) {
+      return NextResponse.json(
+        { error: "Name, email, and message are required" },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Message sent successfully!",
-      },
-      { status: 200 },
-    )
+    await client.create({
+      _type: "contactMessage",
+      name,
+      email,
+      subject: subject ?? "",
+      message,
+      submittedAt: new Date().toISOString(),
+    });
+
+    return NextResponse.json({ success: true, message: "Message sent successfully!" });
   } catch (error) {
-    console.error("[v0] Contact form error:", error)
+    console.error("Contact API error:", error);
     return NextResponse.json(
-      {
-        success: false,
-        message: "Failed to send message. Please try again.",
-      },
-      { status: 500 },
-    )
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
