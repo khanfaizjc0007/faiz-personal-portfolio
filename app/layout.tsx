@@ -15,9 +15,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "AI-Native Product Builder | Portfolio",
-  description: "System Architect & Interface Designer crafting intelligent digital experiences",
-    generator: 'v0.app'
+  title: "Portfolio",
+  description: "Portfolio of Mohammed Faiz Khan – UI/UX, logo, and graphic designer crafting user-focused digital experiences and bold brand identities.",
 }
 
 export const viewport: Viewport = {
@@ -30,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    
+
     <html lang="en" className={`${playfair.variable} ${geistMono.variable}`}>
       <body className="font-sans antialiased overflow-x-hidden">
         <div className="noise-overlay" />
