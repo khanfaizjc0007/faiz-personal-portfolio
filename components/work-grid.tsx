@@ -9,7 +9,7 @@ import { PROJECT_BY_SLUG_QUERY, PROJECTS_QUERY } from "@/sanity/lib/queries"
 const categories = [
   { title: "UI/UX Design", number: "01", slug: "ui-ux-design" },
   { title: "Vibe Coding Projects", number: "02", slug: "vibe-coding-projects" },
-  { title: "Logo Design Projects", number: "03", slug: "logo-design-projects" },
+  { title: "Logo Design & Branding Projects", number: "03", slug: "logo-design-projects" },
   { title: "Graphic Design Projects", number: "04", slug: "graphic-design-projects" },
 ]
 

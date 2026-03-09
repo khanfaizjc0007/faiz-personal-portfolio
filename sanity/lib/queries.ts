@@ -8,6 +8,7 @@ export const PROJECT_BY_SLUG_QUERY = `
   description,
   fullDescription,
   category,
+  showOnHome,
   tags,
   technologies,
   completionYear,
@@ -39,6 +40,7 @@ export const ALL_PROJECT_SLUGS_QUERY = `
 *[_type == "project"]{ "slug": slug.current }
 `;
 
+// All projects (used on /work page)
 export const PROJECTS_QUERY = `
 *[_type == "project"] | order(orderRank asc, _createdAt desc){
   _id,
@@ -51,5 +53,36 @@ export const PROJECTS_QUERY = `
   technologies,
   status,
   completionYear,
+}
+`;
+
+// Only projects selected for the homepage
+export const HOME_PROJECTS_QUERY = `
+*[_type == "project" && showOnHome == true] | order(orderRank asc, _createdAt desc){
+  _id,
+  title,
+  "slug": slug.current,
+  description,
+  category,
+  thumbnail{ asset->{ _id, url } },
+  tags,
+  technologies,
+  status,
+  completionYear,
+}
+`;
+
+export const ABOUT_PAGE_QUERY = `
+*[_type == "aboutPage"][0]{
+  bio,
+  skills[]{
+    category,
+    items
+  },
+  experience[]{
+    year,
+    role,
+    company
+  }
 }
 `;

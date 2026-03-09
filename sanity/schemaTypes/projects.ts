@@ -12,6 +12,15 @@ export default defineType({
     // Drag-and-drop ordering (hidden helper field)
     orderRankField({ type: "project" }),
 
+     // Show on homepage toggle
+     defineField({
+      name: "showOnHome",
+      title: "Show on Home",
+      type: "boolean",
+      description: "Toggle to feature this project on the main page.",
+      initialValue: true,
+    }),
+
     // 1. Title
     defineField({
       name: "title",
@@ -65,6 +74,8 @@ export default defineType({
         layout: "dropdown",
       },
     }),
+
+   
 
     // 3. Tags
     defineField({

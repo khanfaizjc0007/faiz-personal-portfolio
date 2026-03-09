@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { motion, useMotionValue, useSpring } from "framer-motion"
-import { PROJECTS_QUERY } from "@/sanity/lib/queries"
+import { HOME_PROJECTS_QUERY } from "@/sanity/lib/queries"
 import { SanityProject } from "./project-detail"
 import { client } from "@/sanity/lib/client"
 import Link from "next/link"
@@ -22,7 +22,7 @@ export function Works() {
 
   useEffect(() => {
     async function fetchProjects() {
-      const data = await client.fetch(PROJECTS_QUERY)
+      const data = await client.fetch(HOME_PROJECTS_QUERY)
       setProjectsData(data)
       setLoading(false)
     }
@@ -49,7 +49,7 @@ export function Works() {
         className="mb-24"
       >
         <p className="font-mono text-xs tracking-[0.3em] text-muted-foreground mb-4">04 — SELECTED WORKS</p>
-        <h2 className="font-sans text-3xl md:text-5xl font-light italic">The Distortion Gallery</h2>
+        {/* <h2 className="font-sans text-3xl md:text-5xl font-light italic">The Distortion Gallery</h2> */}
       </motion.div>
 
       {/* Projects List */}
@@ -68,8 +68,9 @@ export function Works() {
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              <Link href={`/work/${project.slug}`}
+              <Link
                 href={`/work/${project.slug}`}
+                // href={`/work/${project.slug}`}
                 data-cursor-hover
                 className="group flex flex-col md:flex-row md:items-center justify-between gap-4"
               >

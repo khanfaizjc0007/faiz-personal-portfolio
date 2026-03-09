@@ -13,6 +13,7 @@ export type SanityProject = {
   description: string
   fullDescription?: any[]
   category: string
+  showOnHome?: boolean
   tags?: string[]
   technologies?: string[]
   completionYear?: number

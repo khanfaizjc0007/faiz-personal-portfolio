@@ -1,21 +1,43 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useEffect, useState } from "react"
+import { client } from "@/sanity/lib/client"
+import { ABOUT_PAGE_QUERY } from "@/sanity/lib/queries"
 
-const skills = [
-  { category: "Design", items: ["UI/UX Design", "Design Systems", "Branding", "Prototyping"] },
-  { category: "Development", items: ["Vibe Coding", "Wordpress", "Shopify", "HTML/CSS"] },
-  { category: "AI", items: ["OpenAI", "V0", "Lovart", "Gemini"] },
-  { category: "Tools", items: ["Figma", "Adobe", "Git", "Dora"] },
-]
+type AboutSkillGroup = {
+  category: string
+  items?: string[]
+}
 
-const experience = [
-  { year: "2024", role: "Lead Product Designer", company: "Techchaze Limited" },
-  { year: "2023", role: "UI/UX Designer", company: "Oracle" },
-  { year: "2022", role: "UI/UX Designer", company: "Rovea.Inc" },
-]
+type AboutExperienceItem = {
+  year?: string
+  role?: string
+  company?: string
+}
+
+type AboutPageData = {
+  bio?: string
+  skills?: AboutSkillGroup[]
+  experience?: AboutExperienceItem[]
+}
 
 export function AboutContent() {
+  const [data, setData] = useState<AboutPageData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchAbout() {
+      const result = await client.fetch<AboutPageData>(ABOUT_PAGE_QUERY)
+      setData(result)
+      setLoading(false)
+    }
+    fetchAbout()
+  }, [])
+
+  const skills = data?.skills ?? []
+  const experience = data?.experience ?? []
+
   return (
     <section className="relative py-20 sm:py-24 md:py-32 px-4 sm:px-6 md:px-8 lg:px-12">
       {/* Bio Section */}
@@ -30,7 +52,7 @@ export function AboutContent() {
           01 — BIO
         </p>
         <p className="font-sans text-xl sm:text-2xl md:text-3xl font-light leading-relaxed ">
-          I'm Mohammed Faiz Khan, a designer with 4+ years in the industry. I specialize in UI/UX, logo design, and graphic design, creating user-focused experiences, strong brand identities, and visuals that actually hit. I mix strategy with clean aesthetics to turn ideas into modern, memorable designs.
+          {loading ? "Loading about content..." : data?.bio}
         </p>
       </motion.div>
 
@@ -57,7 +79,7 @@ export function AboutContent() {
             >
               <h3 className="font-mono text-xs tracking-wider text-accent mb-4">{skill.category}</h3>
               <ul className="space-y-2">
-                {skill.items.map((item) => (
+                {skill.items?.map((item) => (
                   <li key={item} className="font-sans text-sm text-muted-foreground">
                     {item}
                   </li>
