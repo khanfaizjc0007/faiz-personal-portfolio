@@ -1,10 +1,17 @@
 import { defineType, defineField } from "sanity";
+import {
+  orderRankField,
+  orderRankOrdering,
+} from "@sanity/orderable-document-list";
 
 export default defineType({
   name: "project",
   title: "Project",
   type: "document",
   fields: [
+    // Drag-and-drop ordering (hidden helper field)
+    orderRankField({ type: "project" }),
+
     // 1. Title
     defineField({
       name: "title",
@@ -95,12 +102,25 @@ export default defineType({
         validation: (Rule) =>
           Rule.required().min(2000).max(new Date().getFullYear()),
       }),
-    // Thumbnail
+
+    
+    // Thumbnail (image)
     defineField({
       name: "thumbnail",
       title: "Thumbnail Image",
       type: "image",
       options: { hotspot: true },
+    }),
+
+    // Thumbnail (video, optional)
+    defineField({
+      name: "thumbnailVideo",
+      title: "Thumbnail Video",
+      type: "file",
+      options: {
+        accept: "video/*",
+      },
+      description: "Optional hero video; shown instead of thumbnail image if present.",
     }),
 
     // ✅ NEW FIELD — Client Problem
@@ -220,5 +240,5 @@ export default defineType({
       subtitle: "client",
     },
   },
-  
+  orderings: [orderRankOrdering],
 });

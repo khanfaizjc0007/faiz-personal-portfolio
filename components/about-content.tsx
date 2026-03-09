@@ -24,15 +24,13 @@ export function AboutContent() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="max-w-4xl mb-20 sm:mb-24 md:mb-32"
+        className="mb-20 sm:mb-24 md:mb-32"
       >
         <p className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] text-muted-foreground mb-4 sm:mb-6">
           01 — BIO
         </p>
-        <p className="font-sans text-xl sm:text-2xl md:text-3xl font-light leading-relaxed text-balance">
-          I'm Mohammed Faiz Khan, a designer with 4+ years in the industry. I specialize in UI/UX, logo design, and
-          graphic design, creating user-focused experiences, strong brand identities, and visuals that actually hit. I
-          mix strategy with clean aesthetics to turn ideas into modern, memorable designs.
+        <p className="font-sans text-xl sm:text-2xl md:text-3xl font-light leading-relaxed ">
+          I'm Mohammed Faiz Khan, a designer with 4+ years in the industry. I specialize in UI/UX, logo design, and graphic design, creating user-focused experiences, strong brand identities, and visuals that actually hit. I mix strategy with clean aesthetics to turn ideas into modern, memorable designs.
         </p>
       </motion.div>
 

@@ -24,6 +24,9 @@ export const PROJECT_BY_SLUG_QUERY = `
   thumbnail{
     asset->{ url }
   },
+  thumbnailVideo{
+    asset->{ url }
+  },
   images[]{
     asset->{ url },
     alt
@@ -37,7 +40,7 @@ export const ALL_PROJECT_SLUGS_QUERY = `
 `;
 
 export const PROJECTS_QUERY = `
-*[_type == "project"] | order(_createdAt desc){
+*[_type == "project"] | order(orderRank asc, _createdAt desc){
   _id,
   title,
   "slug": slug.current,

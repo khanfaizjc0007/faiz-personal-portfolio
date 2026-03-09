@@ -27,6 +27,7 @@ export type SanityProject = {
   contribution?: any[]
   features?: string[]
   thumbnail?: { asset?: { url: string } }
+  thumbnailVideo?: { asset?: { url: string } }
   images?: { asset?: { url: string }; alt?: string }[]
 }
 
@@ -88,7 +89,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
             <h1 className="font-sans text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light tracking-tight mb-6 sm:mb-8 text-balance">
               {project.title}
             </h1>
-            <p className="font-mono text-sm md:text-base text-muted-foreground max-w-2xl leading-relaxed">
+            <p className="font-mono text-sm md:text-base text-muted-foreground leading-relaxed">
               {project.description}
             </p>
           </motion.div>
@@ -145,8 +146,8 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
             {/* Live / GitHub links */}
             <div className="w-full flex gap-4">
               {project.liveUrl && (
-                
-                  <Link href={project.liveUrl}
+
+                <Link href={project.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 font-mono text-xs tracking-wider uppercase text-accent border border-accent/40 px-4 py-2 hover:bg-accent/10 transition-colors"
@@ -155,8 +156,8 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                 </Link>
               )}
               {project.githubUrl && (
-                
-                  <Link href={project.githubUrl}
+
+                <Link href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 font-mono text-xs tracking-wider uppercase text-muted-foreground border border-white/20 px-4 py-2 hover:border-accent/50 transition-colors"
@@ -169,8 +170,8 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
         </div>
       </section>
 
-      {/* Hero Image */}
-      {project.thumbnail?.asset?.url && (
+      {/* Hero Media (Video has priority over Image) */}
+      {(project.thumbnailVideo?.asset?.url || project.thumbnail?.asset?.url) && (
         <section className="relative px-4 sm:px-6 md:px-8 lg:px-12 mb-20 sm:mb-24 md:mb-32">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -180,13 +181,24 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
             className="max-w-7xl mx-auto"
           >
             <div className="relative aspect-video border border-white/10 overflow-hidden">
-              <img
-                src={project.thumbnail.asset.url}
-                alt={project.title}
-                className="w-full h-full object-cover"
-                style={{ filter: "grayscale(50%) contrast(1.1)" }}
-              />
-              <div className="absolute inset-0 bg-accent/10 mix-blend-overlay" />
+              {project.thumbnailVideo?.asset?.url ? (
+                <video
+                  src={project.thumbnailVideo.asset.url}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                />
+              ) : (
+                <img
+                  src={project.thumbnail?.asset?.url ?? ""}
+                  alt={project.title}
+                  className="w-full h-full object-cover"
+                  style={{ filter: "grayscale(50%) contrast(1.1)" }}
+                />
+              )}
+              <div className="absolute inset-0 bg-accent/10 mix-blend-overlay pointer-events-none" />
             </div>
           </motion.div>
         </section>

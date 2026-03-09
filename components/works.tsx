@@ -32,8 +32,9 @@ export function Works() {
   const handleMouseMove = (e: React.MouseEvent) => {
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect()
-      mouseX.set(e.clientX - rect.left)
-      mouseY.set(e.clientY - rect.top)
+      // Center the floating image around the cursor
+      mouseX.set(e.clientX - rect.left - 128) // half of ~w-64 (256px)
+      mouseY.set(e.clientY - rect.top - 80) // half of ~h-40 (160px)
     }
   }
 
@@ -105,10 +106,8 @@ export function Works() {
           <motion.div
             className="absolute pointer-events-none z-50 w-64 h-40 md:w-80 md:h-48 overflow-hidden rounded-lg"
             style={{
-              x: springX,
-              y: springY,
-              translateX: "-50%",
-              translateY: "-320%",
+              left: springX,
+              top: springY,
             }}
             animate={{
               opacity: hoveredIndex !== null ? 1 : 0,
