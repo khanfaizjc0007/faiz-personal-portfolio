@@ -26,7 +26,7 @@ export const PROJECT_BY_SLUG_QUERY = `
     asset->{ url }
   },
   thumbnailVideo{
-    asset->{ url }
+    "videoUrl": asset->url
   },
   images[]{
     asset->{ url },

@@ -1,6 +1,7 @@
 // components/project-detail.tsx
 "use client"
 
+import { useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { PortableText } from "@portabletext/react"
@@ -28,7 +29,7 @@ export type SanityProject = {
   contribution?: any[]
   features?: string[]
   thumbnail?: { asset?: { url: string } }
-  thumbnailVideo?: { asset?: { url: string } }
+  thumbnailVideo?: { videoUrl?: string; asset?: { url: string } }
   images?: { asset?: { url: string }; alt?: string }[]
 }
 
@@ -54,6 +55,7 @@ interface ProjectDetailProps {
 
 export function ProjectDetail({ project }: ProjectDetailProps) {
   const allTags = [...(project.tags ?? []), ...(project.technologies ?? [])]
+  const [videoError, setVideoError] = useState(false)
 
   return (
     <>
@@ -172,38 +174,48 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
       </section>
 
       {/* Hero Media (Video has priority over Image) */}
-      {(project.thumbnailVideo?.asset?.url || project.thumbnail?.asset?.url) && (
-        <section className="relative px-4 sm:px-6 md:px-8 lg:px-12 mb-20 sm:mb-24 md:mb-32">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            className="max-w-7xl mx-auto"
-          >
-            <div className="relative aspect-video border border-white/10 overflow-hidden">
-              {project.thumbnailVideo?.asset?.url ? (
-                <video
-                  src={project.thumbnailVideo.asset.url}
-                  className="w-full h-full object-cover"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                />
-              ) : (
-                <img
-                  src={project.thumbnail?.asset?.url ?? ""}
-                  alt={project.title}
-                  className="w-full h-full object-cover"
-                  style={{ filter: "grayscale(50%) contrast(1.1)" }}
-                />
-              )}
-              <div className="absolute inset-0 bg-accent/10 mix-blend-overlay pointer-events-none" />
-            </div>
-          </motion.div>
-        </section>
-      )}
+      {(() => {
+        const videoUrl = project.thumbnailVideo?.videoUrl ?? project.thumbnailVideo?.asset?.url
+        const imageUrl = project.thumbnail?.asset?.url
+        const hasMedia = Boolean(videoUrl || imageUrl)
+        const showVideo = Boolean(videoUrl && !videoError)
+        if (!hasMedia) return null
+        return (
+          <section className="relative px-4 sm:px-6 md:px-8 lg:px-12 mb-20 sm:mb-24 md:mb-32">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1 }}
+              className="max-w-7xl mx-auto"
+            >
+              <div className="relative aspect-video border border-white/10 overflow-hidden">
+                {showVideo ? (
+                  <video
+                    key={videoUrl}
+                    src={videoUrl}
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="auto"
+                    onError={() => setVideoError(true)}
+                  />
+                ) : (
+                  <img
+                    src={imageUrl ?? ""}
+                    alt={project.title}
+                    className="w-full h-full object-cover"
+                    style={{ filter: "grayscale(50%) contrast(1.1)" }}
+                  />
+                )}
+                <div className="absolute inset-0 bg-accent/10 mix-blend-overlay pointer-events-none" />
+              </div>
+            </motion.div>
+          </section>
+        )
+      })()}
 
       {/* Content Sections */}
       <section className="relative px-4 sm:px-6 md:px-8 lg:px-12 py-12 sm:py-14 md:py-16">
