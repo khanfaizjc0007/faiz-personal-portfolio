@@ -75,7 +75,7 @@ export function WorkGrid() {
                   >
                     <Link href={`/work/${project.slug}`} className="block">
                       {/* Image */}
-                      <div className="relative aspect-[4/3] overflow-hidden bg-black">
+                      <div className="relative aspect-video overflow-hidden bg-black">
                         {project.thumbnail?.asset?.url && (
                           <motion.img
                             src={project.thumbnail.asset.url}
