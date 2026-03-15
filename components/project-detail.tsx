@@ -207,7 +207,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                     src={imageUrl ?? ""}
                     alt={project.title}
                     className="w-full h-full object-cover"
-                    style={{ filter: "grayscale(50%) contrast(1.1)" }}
+                  // style={{ filter: "grayscale(50%) contrast(1.1)" }}
                   />
                 )}
                 <div className="absolute inset-0 bg-accent/10 mix-blend-overlay pointer-events-none" />
@@ -342,7 +342,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                       src={image.asset.url}
                       alt={image.alt ?? `${project.title} image ${index + 1}`}
                       className="w-full h-full object-cover"
-                      style={{ filter: "grayscale(50%) contrast(1.1)" }}
+                      // style={{ filter: "grayscale(50%) contrast(1.1)" }}
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.6 }}
                     />

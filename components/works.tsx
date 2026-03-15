@@ -124,7 +124,7 @@ export function Works() {
                 initial={{ scale: 1.2 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.4 }}
-                style={{ filter: "grayscale(50%) contrast(1.1)" }}
+              // style={{ filter: "grayscale(50%) contrast(1.1)" }}
               />
             )}
             <div className="absolute inset-0 bg-[#2563eb]/10 mix-blend-overlay" />
