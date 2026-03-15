@@ -81,7 +81,7 @@ export function WorkGrid() {
                             src={project.thumbnail.asset.url}
                             alt={project.title}
                             className="w-full h-full object-cover"
-                            style={{ filter: "grayscale(50%) contrast(1.1)" }}
+                            // style={{ filter: "grayscale(50%) contrast(1.1)" }}
                             whileHover={{ scale: 1.05 }}
                             transition={{ duration: 0.6 }}
                           />

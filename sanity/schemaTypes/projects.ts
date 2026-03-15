@@ -104,7 +104,7 @@ export default defineType({
           ],
         },
       ],
-      validation: (Rule) => Rule.min(1).max(6),
+      // validation: (Rule) => Rule.min(1).max(6),
     }),
     defineField({
         name: "completionYear",
