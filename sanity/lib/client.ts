@@ -6,6 +6,7 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true,
+  // Always fetch the latest content (no CDN cache)
+  useCdn: false,
   ...(process.env.SANITY_API_WRITE_TOKEN && { token: process.env.SANITY_API_WRITE_TOKEN }),
 })

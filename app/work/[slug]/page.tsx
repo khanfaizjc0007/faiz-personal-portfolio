@@ -10,6 +10,9 @@ import { Footer } from "@/components/footer"
 import { client } from "@/sanity/lib/client"
 import { PROJECT_BY_SLUG_QUERY, ALL_PROJECT_SLUGS_QUERY } from "@/sanity/lib/queries"
 
+// Always serve the latest project data (no Next.js cache)
+export const revalidate = 0
+
 interface ProjectPageProps {
   params: Promise<{ slug: string }>  // ✅ Promise type
 }
