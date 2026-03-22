@@ -131,7 +131,20 @@ export default defineType({
       options: {
         accept: "video/*",
       },
-      description: "Optional hero video; shown instead of thumbnail image if present.",
+      description:
+        "Optional hero video. Priority: video → PDF → image.",
+    }),
+
+    // Thumbnail (PDF, optional)
+    defineField({
+      name: "thumbnailPdf",
+      title: "Thumbnail PDF",
+      type: "file",
+      options: {
+        accept: "application/pdf",
+      },
+      description:
+        "Optional hero PDF (full height on project page). Shown if no video, before thumbnail image.",
     }),
 
     // ✅ NEW FIELD — Client Problem

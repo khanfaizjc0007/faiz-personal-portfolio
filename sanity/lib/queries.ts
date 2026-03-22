@@ -28,6 +28,9 @@ export const PROJECT_BY_SLUG_QUERY = `
   thumbnailVideo{
     "videoUrl": asset->url
   },
+  thumbnailPdf{
+    "pdfUrl": asset->url
+  },
   images[]{
     asset->{ url },
     alt

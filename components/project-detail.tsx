@@ -1,10 +1,11 @@
 // components/project-detail.tsx
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { PortableText } from "@portabletext/react"
+import { cn } from "@/lib/utils"
 
 // Match exactly what Sanity returns
 export type SanityProject = {
@@ -30,6 +31,7 @@ export type SanityProject = {
   features?: string[]
   thumbnail?: { asset?: { url: string } }
   thumbnailVideo?: { videoUrl?: string; asset?: { url: string } }
+  thumbnailPdf?: { pdfUrl?: string; asset?: { url: string } }
   images?: { asset?: { url: string }; alt?: string }[]
 }
 
@@ -53,14 +55,52 @@ interface ProjectDetailProps {
   project: SanityProject
 }
 
+function mediaUrl(value: string | null | undefined): string | undefined {
+  if (typeof value !== "string") return undefined
+  const t = value.trim()
+  return t.length > 0 ? t : undefined
+}
+
+/** Chrome/Edge PDF viewer: hide toolbar, side panes, scrollbars (best-effort; Safari/Firefox vary). */
+function pdfEmbedSrc(url: string): string {
+  const base = url.split("#")[0] ?? url
+  // FitH = page width matches iframe (full bleed). Pair with a tall enough iframe so one page fits vertically.
+  const hash =
+    "toolbar=0&navpanes=0&scrollbar=0&statusbar=0&messages=0&view=FitH"
+  return `${base}#${hash}`
+}
+
 export function ProjectDetail({ project }: ProjectDetailProps) {
   const allTags = [...(project.tags ?? []), ...(project.technologies ?? [])]
   const [videoError, setVideoError] = useState(false)
 
+  useEffect(() => {
+    setVideoError(false)
+  }, [project._id])
+
+  const videoUrl = mediaUrl(
+    project.thumbnailVideo?.videoUrl ?? project.thumbnailVideo?.asset?.url
+  )
+  const pdfUrl = mediaUrl(project.thumbnailPdf?.pdfUrl ?? project.thumbnailPdf?.asset?.url)
+  const imageUrl = mediaUrl(project.thumbnail?.asset?.url)
+  const showVideo = Boolean(videoUrl && !videoError)
+  const showPdf = Boolean(!showVideo && pdfUrl)
+  const showImage = Boolean(!showVideo && !showPdf && imageUrl)
+  const hasHeroMedia = showVideo || showPdf || showImage
+
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 py-24 sm:py-28 md:py-32">
+      {/* Hero Section — avoid min-h-screen + vertical center when media follows (huge black gap) */}
+      <section
+        className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 py-24 sm:py-28 md:py-32"
+
+      // className={cn(
+      //   "relative px-4 sm:px-6 md:px-8 lg:px-12",
+      //   hasHeroMedia
+      //     ? "pt-24 sm:pt-28 md:pt-32 pb-6 sm:pb-8 md:pb-10"
+      //     : "min-h-screen flex items-center justify-center py-24 sm:py-28 md:py-32"
+      // )}
+      >
         <div className="max-w-6xl w-full">
           {/* Back Button */}
           <motion.div
@@ -173,49 +213,74 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
         </div>
       </section>
 
-      {/* Hero Media (Video has priority over Image) */}
-      {(() => {
-        const videoUrl = project.thumbnailVideo?.videoUrl ?? project.thumbnailVideo?.asset?.url
-        const imageUrl = project.thumbnail?.asset?.url
-        const hasMedia = Boolean(videoUrl || imageUrl)
-        const showVideo = Boolean(videoUrl && !videoError)
-        if (!hasMedia) return null
-        return (
-          <section className="relative px-4 sm:px-6 md:px-8 lg:px-12 mb-20 sm:mb-24 md:mb-32">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1 }}
-              className="max-w-7xl mx-auto"
-            >
-              <div className="relative aspect-video border border-white/10 overflow-hidden">
-                {showVideo ? (
-                  <video
-                    key={videoUrl}
-                    src={videoUrl}
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    preload="auto"
-                    onError={() => setVideoError(true)}
-                  />
-                ) : (
-                  <img
-                    src={imageUrl ?? ""}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                  // style={{ filter: "grayscale(50%) contrast(1.1)" }}
-                  />
-                )}
+      {/* Hero media: video → PDF → image (use animate, not whileInView — scroll/layout can leave opacity 0 forever) */}
+      {hasHeroMedia && showPdf && pdfUrl ? (
+        <section
+          className="relative w-screen max-w-[80vw] left-1/2 -translate-x-1/2 overflow-hidden bg-black mb-20 sm:mb-24 md:mb-32"
+          style={{
+            // FitH scales PDF to full width; portrait pages need ~1.41× viewport width in height. Cap so layout stays sane.
+            height: "min(max(100svh, 132vw), 220dvh)",
+            minHeight: "100svh",
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="relative h-full w-full overflow-hidden"
+          >
+            <iframe
+              key={pdfUrl}
+              title={`${project.title} — PDF`}
+              src={pdfEmbedSrc(pdfUrl)}
+              className="absolute inset-0 block h-full w-full border-0"
+              style={{ backgroundColor: "#0e0e0f" }}
+              scrolling="no"
+              allow="fullscreen"
+            />
+          </motion.div>
+        </section>
+      ) : hasHeroMedia && (showVideo || showImage) ? (
+        <section className="relative w-screen max-w-[100vw] left-1/2 -translate-x-1/2 mb-20 sm:mb-24 md:mb-32">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="w-full"
+          >
+            {/*
+              Fixed viewport box + max-w/max-h on media = scale up to fill width OR height (whichever binds).
+              Avoid max-h-only + w-auto on img — that keeps tall assets artificially narrow.
+            */}
+            {showVideo && videoUrl ? (
+              <div className="relative w-full h-[min(88svh,960px)] min-h-[min(60svh,520px)] border-y border-white/10 sm:border-x sm:border-white/10 overflow-hidden bg-black flex items-center justify-center">
+                <video
+                  key={videoUrl}
+                  src={videoUrl}
+                  className="min-w-0 max-h-full max-w-full w-auto h-auto object-contain bg-black"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  onError={() => setVideoError(true)}
+                />
                 <div className="absolute inset-0 bg-accent/10 mix-blend-overlay pointer-events-none" />
               </div>
-            </motion.div>
-          </section>
-        )
-      })()}
+            ) : imageUrl ? (
+              <div className="relative w-full h-[min(88svh,960px)] min-h-[min(60svh,520px)] border-y border-white/10 sm:border-x sm:border-white/10 overflow-hidden bg-black/40 flex items-center justify-center p-1 sm:p-2">
+                <img
+                  src={imageUrl}
+                  alt={project.title}
+                  className="min-w-0 max-h-full max-w-full w-auto h-auto object-contain"
+                  style={{ filter: "grayscale(50%) contrast(1.1)" }}
+                />
+                <div className="absolute inset-0 bg-accent/10 mix-blend-overlay pointer-events-none" />
+              </div>
+            ) : null}
+          </motion.div>
+        </section>
+      ) : null}
 
       {/* Content Sections */}
       <section className="relative px-4 sm:px-6 md:px-8 lg:px-12 py-12 sm:py-14 md:py-16">
