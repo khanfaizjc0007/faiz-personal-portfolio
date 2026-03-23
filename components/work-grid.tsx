@@ -75,12 +75,18 @@ export function WorkGrid() {
                   >
                     <Link href={`/work/${project.slug}`} className="block">
                       {/* Image */}
-                      <div className="relative aspect-video overflow-hidden bg-black">
+                      <div
+                        className={`relative overflow-hidden ${category.slug === "graphic-design-projects"
+                            ? "aspect-[210/297] bg-[#111]"
+                            : "aspect-video bg-black"
+                          }`}
+                      >
                         {project.thumbnail?.asset?.url && (
                           <motion.img
                             src={project.thumbnail.asset.url}
                             alt={project.title}
-                            className="w-full h-full object-cover"
+                            className={`w-full h-full ${category.slug === "graphic-design-projects" ? "object-contain" : "object-cover"
+                              }`}
                             // style={{ filter: "grayscale(50%) contrast(1.1)" }}
                             whileHover={{ scale: 1.05 }}
                             transition={{ duration: 0.6 }}
